@@ -6,3 +6,42 @@ generator client {
 datasource db {
   provider = "postgresql"
 }
+
+enum Role {
+  BUYER
+  SELLER
+  ADMIN
+}
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  password  String
+  role      Role     @default(BUYER)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  profile       Profile?
+  sellerProfile SellerProfile?
+}
+
+model Profile {
+  id        String  @id @default(uuid())
+  userId    String  @unique
+  firstName String?
+  lastName  String?
+  avatar    String?
+  phone     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model SellerProfile {
+  id          String  @id @default(uuid())
+  userId      String  @unique
+  shopName    String
+  description String?
+  isApproved  Boolean @default(false)
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
