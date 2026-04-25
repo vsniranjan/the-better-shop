@@ -60,7 +60,17 @@ export async function POST(req: NextRequest) {
     // sign token
     const token = signToken({ id: user.id, role: user.role });
 
-    return NextResponse.json({ token, role: user.role }, { status: 201 });
+    const response = NextResponse.json({ role: user.role }, { status: 201 });
+
+    response.cookies.set("token", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      maxAge: 60 * 60 * 24 * 7,
+      path: "/",
+    });
+
+    return response;
   } catch (err) {
     console.error(err);
     return NextResponse.json(
