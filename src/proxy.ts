@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { verifyToken } from "./lib/jwt";
+import { verifyToken } from "@/lib/jwt";
 
 const protectedRoutes = ["/api/auth/me"];
 
