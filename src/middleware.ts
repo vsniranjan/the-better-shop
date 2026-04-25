@@ -14,15 +14,15 @@ export function middleware(req: NextRequest) {
     return NextResponse.next();
   }
 
-  const authHeader = req.headers.get("authorization");
+  const token = req.cookies.get("token")?.value;
 
-  if (!authHeader || !authHeader.startsWith("Bearer ")) {
+  if (!token) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
   try {
-    const token = authHeader.split(" ")[1];
     const payload = verifyToken(token);
+
     const requestHeaders = new Headers(req.headers);
     requestHeaders.set("x-user-id", payload.id);
     requestHeaders.set("x-user-role", payload.role);
