@@ -3,7 +3,7 @@ import { verifyToken } from "./lib/jwt";
 
 const protectedRoutes = ["/api/auth/me"];
 
-export function middleware(req: NextRequest) {
+export function proxy(req: NextRequest) {
   const { pathname } = req.nextUrl;
 
   const isProtected = protectedRoutes.some((route) =>
