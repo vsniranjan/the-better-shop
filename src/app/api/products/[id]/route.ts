@@ -145,3 +145,38 @@ export async function PATCH(
     );
   }
 }
+
+export async function DELETE(
+  req: NextRequest,
+  { params }: { params: { id: string } },
+) {
+  const role = req.headers.get("x-user-role");
+  const userId = req.headers.get("x-user-id");
+
+  if (role !== "SELLER" && role !== "ADMIN") {
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  }
+
+  const { id } = params;
+
+  const product = await prisma.product.findUnique({ where: { id } });
+
+  if (!product) {
+    return NextResponse.json({ error: "Product not found" }, { status: 404 });
+  }
+
+  if (role === "SELLER" && product.sellerId !== userId) {
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  }
+
+  try {
+    await prisma.product.delete({ where: { id } });
+    return NextResponse.json({ message: "Product deleted" });
+  } catch (error) {
+    console.error("Product deletion failed:", error);
+    return NextResponse.json(
+      { error: "Something went wrong" },
+      { status: 500 },
+    );
+  }
+}
