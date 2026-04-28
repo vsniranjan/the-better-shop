@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { verifyToken } from "@/lib/jwt";
 
-const protectedRoutes = ["/api/auth/me"];
+const protectedRoutes = ["/api/auth/me", "/api/admin/sellers"];
 
 export function proxy(req: NextRequest) {
   const { pathname } = req.nextUrl;
