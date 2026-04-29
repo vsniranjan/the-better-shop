@@ -35,7 +35,7 @@ export async function GET(
 }
 export async function PATCH(
   req: NextRequest,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
   const role = req.headers.get("x-user-role");
   const userId = req.headers.get("x-user-id");
@@ -149,7 +149,7 @@ export async function PATCH(
 
 export async function DELETE(
   req: NextRequest,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
   const role = req.headers.get("x-user-role");
   const userId = req.headers.get("x-user-id");
