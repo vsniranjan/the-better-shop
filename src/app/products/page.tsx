@@ -2,8 +2,7 @@
 
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import Image from "next/image";
-import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 interface Product {
   id: string;
@@ -29,14 +28,15 @@ interface ProductsResponse {
   };
 }
 
-const fetchProducts = async (page: number): Promise<ProductsResponse> => {
+async function fetchProducts(page: number): Promise<ProductsResponse> {
   const res = await fetch(`/api/products?page=${page}&limit=20`);
   if (!res.ok) throw new Error("Failed to fetch products");
   return res.json();
-};
+}
 
-const ProductsPage = () => {
+export default function ProductsPage() {
   const [page, setPage] = useState(1);
+  const router = useRouter();
 
   const { data, isLoading, isError } = useQuery({
     queryKey: ["products", page],
@@ -49,9 +49,7 @@ const ProductsPage = () => {
       <p className='p-8 text-center text-red-500'>Failed to load products.</p>
     );
 
-  if (!data) return null;
-
-  const { products, pagination } = data;
+  const { products, pagination } = data!;
 
   return (
     <div className='max-w-6xl mx-auto px-4 py-8'>
@@ -62,13 +60,13 @@ const ProductsPage = () => {
       ) : (
         <div className='grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4'>
           {products.map((product) => (
-            <Link
+            <div
               key={product.id}
-              href={`/products/${product.id}`}
-              className='border rounded-lg p-3 hover:shadow-md transition'
+              onClick={() => router.push(`/products/${product.id}`)}
+              className='border rounded-lg p-3 hover:shadow-md transition cursor-pointer'
             >
               {product.images[0] && (
-                <Image
+                <img
                   src={product.images[0]}
                   alt={product.title}
                   className='w-full h-40 object-cover rounded mb-2'
@@ -81,7 +79,7 @@ const ProductsPage = () => {
               <p className='text-gray-400 text-xs mt-1'>
                 {product.seller.sellerProfile?.shopName ?? "Unknown Shop"}
               </p>
-            </Link>
+            </div>
           ))}
         </div>
       )}
@@ -111,6 +109,4 @@ const ProductsPage = () => {
       )}
     </div>
   );
-};
-
-export default ProductsPage;
+}
