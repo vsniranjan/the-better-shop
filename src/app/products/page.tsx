@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 
@@ -28,19 +28,32 @@ interface ProductsResponse {
   };
 }
 
-async function fetchProducts(page: number): Promise<ProductsResponse> {
-  const res = await fetch(`/api/products?page=${page}&limit=20`);
+async function fetchProducts(page: number, search: string): Promise<ProductsResponse> {
+  const params = new URLSearchParams({ page: String(page), limit: "20" });
+  if (search) params.set("search", search);
+  const res = await fetch(`/api/products?${params}`);
   if (!res.ok) throw new Error("Failed to fetch products");
   return res.json();
 }
 
 export default function ProductsPage() {
   const [page, setPage] = useState(1);
+  const [searchInput, setSearchInput] = useState("");
+  const [search, setSearch] = useState("");
   const router = useRouter();
 
+  // Debounce search input by 400ms
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setSearch(searchInput);
+      setPage(1);
+    }, 400);
+    return () => clearTimeout(timer);
+  }, [searchInput]);
+
   const { data, isLoading, isError } = useQuery({
-    queryKey: ["products", page],
-    queryFn: () => fetchProducts(page),
+    queryKey: ["products", page, search],
+    queryFn: () => fetchProducts(page, search),
   });
 
   if (isLoading)
@@ -63,10 +76,25 @@ export default function ProductsPage() {
 
   return (
     <div className='max-w-[1440px] mx-auto px-4 md:px-6 lg:px-12 py-8 lg:py-12'>
-      {/* Page Header */}
-      <h1 className='text-[24px] md:text-[32px] font-medium text-[#111111] mb-8'>
-        All Products
-      </h1>
+      {/* Page Header + Search */}
+      <div className='flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8'>
+        <h1 className='text-[24px] md:text-[32px] font-medium text-[#111111]'>
+          All Products
+        </h1>
+        <div className='relative w-full sm:w-[320px]'>
+          <svg className='absolute left-3.5 top-1/2 -translate-y-1/2 text-[#707072]' width='16' height='16' viewBox='0 0 16 16' fill='none'>
+            <circle cx='7' cy='7' r='5.5' stroke='currentColor' strokeWidth='1.5'/>
+            <path d='M11 11L14 14' stroke='currentColor' strokeWidth='1.5' strokeLinecap='round'/>
+          </svg>
+          <input
+            type='text'
+            value={searchInput}
+            onChange={(e) => setSearchInput(e.target.value)}
+            placeholder='Search products...'
+            className='w-full bg-[#F5F5F5] border border-[#CACACB] rounded-full pl-10 pr-4 py-2.5 text-[14px] text-[#111111] placeholder-[#707072] outline-none transition-colors duration-200 focus:border-[#111111]'
+          />
+        </div>
+      </div>
 
       {products.length === 0 ? (
         <div className='py-20 text-center'>
