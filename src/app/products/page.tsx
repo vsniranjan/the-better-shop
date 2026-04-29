@@ -43,65 +43,99 @@ export default function ProductsPage() {
     queryFn: () => fetchProducts(page),
   });
 
-  if (isLoading) return <p className='p-8 text-center'>Loading...</p>;
+  if (isLoading)
+    return (
+      <div className='min-h-screen flex items-center justify-center'>
+        <p className='text-[16px] font-medium text-[#707072]'>Loading...</p>
+      </div>
+    );
+
   if (isError)
     return (
-      <p className='p-8 text-center text-red-500'>Failed to load products.</p>
+      <div className='min-h-screen flex items-center justify-center'>
+        <p className='text-[16px] font-medium text-[#D30005]'>
+          Failed to load products.
+        </p>
+      </div>
     );
 
   const { products, pagination } = data!;
 
   return (
-    <div className='max-w-6xl mx-auto px-4 py-8'>
-      <h1 className='text-2xl font-bold mb-6'>Products</h1>
+    <div className='max-w-[1440px] mx-auto px-4 md:px-6 lg:px-12 py-8 lg:py-12'>
+      {/* Page Header */}
+      <h1 className='text-[24px] md:text-[32px] font-medium text-[#111111] mb-8'>
+        All Products
+      </h1>
 
       {products.length === 0 ? (
-        <p className='text-gray-500'>No products yet.</p>
+        <div className='py-20 text-center'>
+          <p className='text-[16px] text-[#707072]'>No products available.</p>
+        </div>
       ) : (
-        <div className='grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4'>
+        <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-3 gap-y-10'>
           {products.map((product) => (
             <div
               key={product.id}
               onClick={() => router.push(`/products/${product.id}`)}
-              className='border rounded-lg p-3 hover:shadow-md transition cursor-pointer'
+              className='cursor-pointer group bg-[#FAFAFA] border border-[#E5E5E5] rounded-xl overflow-hidden hover:border-[#CACACB] transition-colors duration-200'
             >
-              {product.images[0] && (
-                <img
-                  src={product.images[0]}
-                  alt={product.title}
-                  className='w-full h-40 object-cover rounded mb-2'
-                />
-              )}
-              <p className='font-medium text-sm truncate'>{product.title}</p>
-              <p className='text-gray-600 text-sm'>
-                ${product.price.toFixed(2)}
-              </p>
-              <p className='text-gray-400 text-xs mt-1'>
-                {product.seller.sellerProfile?.shopName ?? "Unknown Shop"}
-              </p>
+              {/* Product Image — no border radius, full bleed within card */}
+              <div className='aspect-square bg-[#F5F5F5] overflow-hidden'>
+                {product.images[0] ? (
+                  <img
+                    src={product.images[0]}
+                    alt={product.title}
+                    loading='lazy'
+                    className='w-full h-full object-cover'
+                  />
+                ) : (
+                  <div className='w-full h-full flex items-center justify-center'>
+                    <span className='text-[#9E9EA0] text-[14px]'>
+                      No Image
+                    </span>
+                  </div>
+                )}
+              </div>
+
+              {/* Product Info */}
+              <div className='px-4 py-3'>
+                <div className='flex justify-between items-start gap-2'>
+                  <p className='text-[15px] font-medium text-[#111111] leading-snug'>
+                    {product.title}
+                  </p>
+                  <p className='text-[15px] font-medium text-[#111111] whitespace-nowrap'>
+                    ${product.price.toFixed(2)}
+                  </p>
+                </div>
+                <p className='text-[14px] text-[#707072] mt-0.5'>
+                  {product.seller.sellerProfile?.shopName ?? "Unknown Shop"}
+                </p>
+              </div>
             </div>
           ))}
         </div>
       )}
 
+      {/* Pagination */}
       {pagination.totalPages > 1 && (
-        <div className='flex justify-center gap-2 mt-8'>
+        <div className='flex items-center justify-center gap-4 mt-12'>
           <button
             onClick={() => setPage((p) => Math.max(1, p - 1))}
             disabled={page === 1}
-            className='px-4 py-2 border rounded disabled:opacity-50'
+            className='px-6 py-2.5 rounded-full text-[14px] font-medium border border-[#CACACB] text-[#111111] hover:border-[#707072] hover:bg-[#E5E5E5] transition-colors duration-200 cursor-pointer disabled:bg-[#E5E5E5] disabled:text-[#9E9EA0] disabled:border-[#E5E5E5] disabled:cursor-not-allowed'
           >
             Prev
           </button>
-          <span className='px-4 py-2 text-sm text-gray-600'>
-            {page} / {pagination.totalPages}
+          <span className='text-[14px] font-medium text-[#707072]'>
+            Page {page} of {pagination.totalPages}
           </span>
           <button
             onClick={() =>
               setPage((p) => Math.min(pagination.totalPages, p + 1))
             }
             disabled={page === pagination.totalPages}
-            className='px-4 py-2 border rounded disabled:opacity-50'
+            className='px-6 py-2.5 rounded-full text-[14px] font-medium border border-[#CACACB] text-[#111111] hover:border-[#707072] hover:bg-[#E5E5E5] transition-colors duration-200 cursor-pointer disabled:bg-[#E5E5E5] disabled:text-[#9E9EA0] disabled:border-[#E5E5E5] disabled:cursor-not-allowed'
           >
             Next
           </button>

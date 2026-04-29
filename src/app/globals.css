@@ -1,3 +1,5 @@
+@import "tailwindcss";
+
 * {
 	box-sizing: border-box;
 }
@@ -9,5 +11,9 @@ body {
 }
 
 body {
-	font-family: Arial, sans-serif;
+	font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+	color: #111111;
+	background-color: #ffffff;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
 }

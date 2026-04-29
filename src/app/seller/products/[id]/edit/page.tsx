@@ -27,11 +27,7 @@ export default function EditProductPage() {
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
 
-  const {
-    data: product,
-    isLoading,
-    isError,
-  } = useQuery({
+  const { data: product, isLoading, isError } = useQuery({
     queryKey: ["product", id],
     queryFn: () => fetchProduct(id),
   });
@@ -46,14 +42,8 @@ export default function EditProductPage() {
       if (!res.ok) throw new Error(data.error);
       return data;
     },
-    onSuccess: () => {
-      router.push("/seller/products");
-    },
-    onError: (err) => {
-      if (err instanceof Error) {
-        setError(err.message);
-      }
-    },
+    onSuccess: () => { router.push("/seller/products"); },
+    onError: (err) => { if (err instanceof Error) { setError(err.message); } },
   });
 
   function handleSubmit(e: React.SubmitEvent<HTMLFormElement>) {
@@ -63,107 +53,68 @@ export default function EditProductPage() {
     mutation.mutate(formData);
   }
 
-  if (isLoading) return <p className='p-8 text-center'>Loading...</p>;
-  if (isError)
-    return (
-      <p className='p-8 text-center text-red-500'>Failed to load product.</p>
-    );
-
+  if (isLoading) return (
+    <div className='min-h-screen flex items-center justify-center'>
+      <p className='text-[16px] font-medium text-[#707072]'>Loading...</p>
+    </div>
+  );
+  if (isError) return (
+    <div className='min-h-screen flex items-center justify-center'>
+      <p className='text-[16px] font-medium text-[#D30005]'>Failed to load product.</p>
+    </div>
+  );
   if (!product) return null;
+
   return (
-    <div className='max-w-xl mx-auto px-4 py-8'>
-      <h1 className='text-2xl font-bold mb-6'>Edit Product</h1>
+    <div className='max-w-[560px] mx-auto px-4 md:px-6 py-8 lg:py-12'>
+      <h1 className='text-[24px] md:text-[32px] font-medium text-[#111111] mb-8'>Edit Product</h1>
 
-      {error && <p className='text-red-500 text-sm mb-4'>{error}</p>}
-
-      <form onSubmit={handleSubmit} className='flex flex-col gap-4'>
+      <form onSubmit={handleSubmit} className='flex flex-col gap-5'>
         <div>
-          <label className='block text-sm font-medium mb-1'>Title</label>
-          <input
-            name='title'
-            defaultValue={product.title}
-            className='w-full border rounded-lg px-3 py-2 text-sm'
-          />
+          <label className='block text-[14px] font-medium text-[#111111] mb-1.5'>Title</label>
+          <input name='title' defaultValue={product.title} className='w-full bg-[#F5F5F5] border border-[#CACACB] rounded-lg px-4 py-3 text-[16px] text-[#111111] placeholder-[#707072] outline-none transition-colors duration-200 focus:border-[#111111]' />
         </div>
 
         <div>
-          <label className='block text-sm font-medium mb-1'>Description</label>
-          <textarea
-            name='description'
-            defaultValue={product.description ?? ""}
-            rows={3}
-            className='w-full border rounded-lg px-3 py-2 text-sm'
-          />
+          <label className='block text-[14px] font-medium text-[#111111] mb-1.5'>Description</label>
+          <textarea name='description' defaultValue={product.description ?? ""} rows={4} className='w-full bg-[#F5F5F5] border border-[#CACACB] rounded-lg px-4 py-3 text-[16px] text-[#111111] placeholder-[#707072] outline-none transition-colors duration-200 focus:border-[#111111] resize-y' />
         </div>
 
-        <div>
-          <label className='block text-sm font-medium mb-1'>Price</label>
-          <input
-            name='price'
-            type='number'
-            step='0.01'
-            min='0'
-            defaultValue={product.price}
-            className='w-full border rounded-lg px-3 py-2 text-sm'
-          />
-        </div>
-
-        <div>
-          <label className='block text-sm font-medium mb-1'>Stock</label>
-          <input
-            name='stock'
-            type='number'
-            min='0'
-            defaultValue={product.stock}
-            className='w-full border rounded-lg px-3 py-2 text-sm'
-          />
-        </div>
-
-        <div>
-          <label className='block text-sm font-medium mb-1'>
-            Categories{" "}
-            <span className='text-gray-400 font-normal'>(comma separated)</span>
-          </label>
-          <input
-            name='categories'
-            defaultValue={product.categories
-              .map((c) => c.category.name)
-              .join(", ")}
-            className='w-full border rounded-lg px-3 py-2 text-sm'
-          />
-        </div>
-
-        <div>
-          <label className='block text-sm font-medium mb-1'>
-            Images{" "}
-            <span className='text-gray-400 font-normal'>
-              (leave empty to keep existing)
-            </span>
-          </label>
-          <div className='flex gap-2 mb-2'>
-            {product.images.map((url, i) => (
-              <img
-                key={i}
-                src={url}
-                alt={`image ${i + 1}`}
-                className='w-16 h-16 object-cover rounded'
-              />
-            ))}
+        <div className='grid grid-cols-2 gap-4'>
+          <div>
+            <label className='block text-[14px] font-medium text-[#111111] mb-1.5'>Price</label>
+            <input name='price' type='number' step='0.01' min='0' defaultValue={product.price} className='w-full bg-[#F5F5F5] border border-[#CACACB] rounded-lg px-4 py-3 text-[16px] text-[#111111] placeholder-[#707072] outline-none transition-colors duration-200 focus:border-[#111111]' />
           </div>
-          <input
-            name='images'
-            type='file'
-            accept='image/*'
-            multiple
-            className='w-full text-sm'
-          />
+          <div>
+            <label className='block text-[14px] font-medium text-[#111111] mb-1.5'>Stock</label>
+            <input name='stock' type='number' min='0' defaultValue={product.stock} className='w-full bg-[#F5F5F5] border border-[#CACACB] rounded-lg px-4 py-3 text-[16px] text-[#111111] placeholder-[#707072] outline-none transition-colors duration-200 focus:border-[#111111]' />
+          </div>
         </div>
 
-        <button
-          type='submit'
-          disabled={mutation.isPending}
-          className='bg-black text-white py-2 rounded-lg hover:bg-gray-800 transition text-sm disabled:opacity-50'
-        >
+        <div>
+          <label className='block text-[14px] font-medium text-[#111111] mb-1.5'>
+            Categories <span className='text-[#707072] font-normal'>(comma separated)</span>
+          </label>
+          <input name='categories' defaultValue={product.categories.map((c) => c.category.name).join(", ")} className='w-full bg-[#F5F5F5] border border-[#CACACB] rounded-lg px-4 py-3 text-[16px] text-[#111111] placeholder-[#707072] outline-none transition-colors duration-200 focus:border-[#111111]' />
+        </div>
+
+        <div>
+          <label className='block text-[14px] font-medium text-[#111111] mb-1.5'>
+            Images <span className='text-[#707072] font-normal'>(leave empty to keep existing)</span>
+          </label>
+          {product.images.length > 0 && (
+            <div className='flex gap-2 mb-3'>
+              {product.images.map((url, i) => (
+                <img key={i} src={url} alt={`image ${i + 1}`} className='w-16 h-16 object-cover bg-[#F5F5F5]' />
+              ))}
+            </div>
+          )}
+          <input name='images' type='file' accept='image/*' multiple className='w-full text-[14px] text-[#707072] file:mr-3 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-[14px] file:font-medium file:bg-[#F5F5F5] file:text-[#111111] hover:file:bg-[#E5E5E5] file:cursor-pointer file:transition-colors file:duration-200' />
+        </div>
+
+        {error && <p className='text-[#D30005] text-[12px] font-medium'>{error}</p>}
+
+        <button type='submit' disabled={mutation.isPending} className='w-full bg-[#111111] text-white py-3 rounded-full text-[16px] font-medium hover:bg-[#707072] transition-colors duration-200 cursor-pointer disabled:bg-[#E5E5E5] disabled:text-[#9E9EA0] disabled:cursor-not-allowed mt-2'>
           {mutation.isPending ? "Saving..." : "Save Changes"}
         </button>
       </form>

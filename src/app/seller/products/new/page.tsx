@@ -38,83 +38,46 @@ export default function NewProductPage() {
   }
 
   return (
-    <div className='max-w-xl mx-auto px-4 py-8'>
-      <h1 className='text-2xl font-bold mb-6'>Add Product</h1>
+    <div className='max-w-[560px] mx-auto px-4 md:px-6 py-8 lg:py-12'>
+      <h1 className='text-[24px] md:text-[32px] font-medium text-[#111111] mb-8'>Add Product</h1>
 
-      {error && <p className='text-red-500 text-sm mb-4'>{error}</p>}
-
-      <form onSubmit={handleSubmit} className='flex flex-col gap-4'>
+      <form onSubmit={handleSubmit} className='flex flex-col gap-5'>
         <div>
-          <label className='block text-sm font-medium mb-1'>Title</label>
-          <input
-            name='title'
-            required
-            className='w-full border rounded-lg px-3 py-2 text-sm'
-          />
+          <label className='block text-[14px] font-medium text-[#111111] mb-1.5'>Title</label>
+          <input name='title' required className='w-full bg-[#F5F5F5] border border-[#CACACB] rounded-lg px-4 py-3 text-[16px] text-[#111111] placeholder-[#707072] outline-none transition-colors duration-200 focus:border-[#111111]' />
         </div>
 
         <div>
-          <label className='block text-sm font-medium mb-1'>Description</label>
-          <textarea
-            name='description'
-            rows={3}
-            className='w-full border rounded-lg px-3 py-2 text-sm'
-          />
+          <label className='block text-[14px] font-medium text-[#111111] mb-1.5'>Description</label>
+          <textarea name='description' rows={4} className='w-full bg-[#F5F5F5] border border-[#CACACB] rounded-lg px-4 py-3 text-[16px] text-[#111111] placeholder-[#707072] outline-none transition-colors duration-200 focus:border-[#111111] resize-y' />
+        </div>
+
+        <div className='grid grid-cols-2 gap-4'>
+          <div>
+            <label className='block text-[14px] font-medium text-[#111111] mb-1.5'>Price</label>
+            <input name='price' type='number' step='0.01' min='0' required className='w-full bg-[#F5F5F5] border border-[#CACACB] rounded-lg px-4 py-3 text-[16px] text-[#111111] placeholder-[#707072] outline-none transition-colors duration-200 focus:border-[#111111]' />
+          </div>
+          <div>
+            <label className='block text-[14px] font-medium text-[#111111] mb-1.5'>Stock</label>
+            <input name='stock' type='number' min='0' required className='w-full bg-[#F5F5F5] border border-[#CACACB] rounded-lg px-4 py-3 text-[16px] text-[#111111] placeholder-[#707072] outline-none transition-colors duration-200 focus:border-[#111111]' />
+          </div>
         </div>
 
         <div>
-          <label className='block text-sm font-medium mb-1'>Price</label>
-          <input
-            name='price'
-            type='number'
-            step='0.01'
-            min='0'
-            required
-            className='w-full border rounded-lg px-3 py-2 text-sm'
-          />
-        </div>
-
-        <div>
-          <label className='block text-sm font-medium mb-1'>Stock</label>
-          <input
-            name='stock'
-            type='number'
-            min='0'
-            required
-            className='w-full border rounded-lg px-3 py-2 text-sm'
-          />
-        </div>
-
-        <div>
-          <label className='block text-sm font-medium mb-1'>
-            Categories{" "}
-            <span className='text-gray-400 font-normal'>(comma separated)</span>
+          <label className='block text-[14px] font-medium text-[#111111] mb-1.5'>
+            Categories <span className='text-[#707072] font-normal'>(comma separated)</span>
           </label>
-          <input
-            name='categories'
-            placeholder='lighting, decor, study'
-            required
-            className='w-full border rounded-lg px-3 py-2 text-sm'
-          />
+          <input name='categories' placeholder='e.g. lighting, decor, study' required className='w-full bg-[#F5F5F5] border border-[#CACACB] rounded-lg px-4 py-3 text-[16px] text-[#111111] placeholder-[#707072] outline-none transition-colors duration-200 focus:border-[#111111]' />
         </div>
 
         <div>
-          <label className='block text-sm font-medium mb-1'>Images</label>
-          <input
-            name='images'
-            type='file'
-            accept='image/*'
-            multiple
-            required
-            className='w-full text-sm'
-          />
+          <label className='block text-[14px] font-medium text-[#111111] mb-1.5'>Images</label>
+          <input name='images' type='file' accept='image/*' multiple required className='w-full text-[14px] text-[#707072] file:mr-3 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-[14px] file:font-medium file:bg-[#F5F5F5] file:text-[#111111] hover:file:bg-[#E5E5E5] file:cursor-pointer file:transition-colors file:duration-200' />
         </div>
 
-        <button
-          type='submit'
-          disabled={loading}
-          className='bg-black text-white py-2 rounded-lg hover:bg-gray-800 transition text-sm disabled:opacity-50'
-        >
+        {error && <p className='text-[#D30005] text-[12px] font-medium'>{error}</p>}
+
+        <button type='submit' disabled={loading} className='w-full bg-[#111111] text-white py-3 rounded-full text-[16px] font-medium hover:bg-[#707072] transition-colors duration-200 cursor-pointer disabled:bg-[#E5E5E5] disabled:text-[#9E9EA0] disabled:cursor-not-allowed mt-2'>
           {loading ? "Creating..." : "Create Product"}
         </button>
       </form>
