@@ -44,7 +44,7 @@ export async function PATCH(
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 
-  const { id } = params;
+  const { id } = await params;
 
   const product = await prisma.product.findUnique({ where: { id } });
 
@@ -64,8 +64,9 @@ export async function PATCH(
     const priceRaw = formData.get("price") as string | null;
     const stockRaw = formData.get("stock") as string | null;
     const categoriesRaw = formData.get("categories") as string | null;
-    const imageFiles = formData.getAll("images") as File[];
-
+    const imageFiles = (formData.getAll("images") as File[]).filter(
+      (f) => f.size > 0,
+    );
     const price = priceRaw ? parseFloat(priceRaw) : undefined;
     const stock = stockRaw ? parseInt(stockRaw) : undefined;
 
@@ -157,7 +158,7 @@ export async function DELETE(
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 
-  const { id } = params;
+  const { id } = await params;
 
   const product = await prisma.product.findUnique({ where: { id } });
 
