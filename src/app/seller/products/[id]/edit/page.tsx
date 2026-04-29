@@ -1,7 +1,6 @@
 "use client";
 
 import { useQuery, useMutation } from "@tanstack/react-query";
-import Image from "next/image";
 import { useParams, useRouter } from "next/navigation";
 import { useState } from "react";
 
@@ -143,7 +142,7 @@ export default function EditProductPage() {
           </label>
           <div className='flex gap-2 mb-2'>
             {product.images.map((url, i) => (
-              <Image
+              <img
                 key={i}
                 src={url}
                 alt={`image ${i + 1}`}
