@@ -3,7 +3,7 @@ import { prisma } from "@/lib/prisma";
 
 export async function PATCH(
   req: NextRequest,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
   const role = req.headers.get("x-user-role");
 
@@ -11,7 +11,7 @@ export async function PATCH(
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 
-  const { id } = params;
+  const { id } = await params;
 
   const sellerProfile = await prisma.sellerProfile.findUnique({
     where: { userId: id },
