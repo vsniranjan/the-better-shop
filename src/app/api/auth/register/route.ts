@@ -4,7 +4,6 @@ import { prisma } from "@/lib/prisma";
 import { signToken } from "@/lib/jwt";
 import { z } from "zod";
 
-// Schema for proper body
 const registerSchema = z.object({
   email: z.email("Invalid email address"),
   password: z
@@ -12,15 +11,14 @@ const registerSchema = z.object({
     .trim()
     .min(6, "Password must be at least 6 characters")
     .max(16, "Password must be lower than 16 characters"),
-
   role: z.enum(["BUYER", "SELLER"]).optional(),
+  shopName: z.string().min(1).optional(),
 });
 
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
 
-    // Validation using Zod
     const parsed = registerSchema.safeParse(body);
     if (!parsed.success) {
       return NextResponse.json(
@@ -28,13 +26,19 @@ export async function POST(req: NextRequest) {
         { status: 400 },
       );
     }
-    const { email, password, role } = parsed.data;
 
-    // Normalising email for checking and making role safe (no ADMIN)
+    const { email, password, role, shopName } = parsed.data;
+
     const normalizedEmail = email.trim().toLowerCase();
     const safeRole = role === "SELLER" ? "SELLER" : "BUYER";
 
-    // Check if email is already existing
+    if (safeRole === "SELLER" && !shopName) {
+      return NextResponse.json(
+        { error: "Shop name is required for sellers" },
+        { status: 400 },
+      );
+    }
+
     const existing = await prisma.user.findUnique({
       where: { email: normalizedEmail },
     });
@@ -45,19 +49,33 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // hashing password
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // create user in db
-    const user = await prisma.user.create({
-      data: {
-        email: normalizedEmail,
-        password: hashedPassword,
-        role: safeRole,
-      },
+    const user = await prisma.$transaction(async (tx) => {
+      const user = await tx.user.create({
+        data: {
+          email: normalizedEmail,
+          password: hashedPassword,
+          role: safeRole,
+        },
+      });
+
+      await tx.profile.create({
+        data: { userId: user.id },
+      });
+
+      if (safeRole === "SELLER") {
+        await tx.sellerProfile.create({
+          data: {
+            userId: user.id,
+            shopName: shopName!,
+          },
+        });
+      }
+
+      return user;
     });
 
-    // sign token
     const token = signToken({ id: user.id, role: user.role });
 
     const response = NextResponse.json({ role: user.role }, { status: 201 });
