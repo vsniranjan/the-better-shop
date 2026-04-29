@@ -1,7 +1,6 @@
 "use client";
 
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
-import Image from "next/image";
 import Link from "next/link";
 
 interface Product {
@@ -49,7 +48,6 @@ const SellerProductPage = () => {
     return (
       <p className='p-8 text-center text-red-500'>Failed to load products.</p>
     );
-
   if (!products) return null;
 
   return (
@@ -70,7 +68,6 @@ const SellerProductPage = () => {
         <table className='w-full text-sm border-collapse'>
           <thead>
             <tr className='border-b text-left text-gray-500'>
-              <th className='py-3 pr-4'>Image</th>
               <th className='py-3 pr-4'>Title</th>
               <th className='py-3 pr-4'>Price</th>
               <th className='py-3 pr-4'>Stock</th>
@@ -81,17 +78,6 @@ const SellerProductPage = () => {
           <tbody>
             {products.map((product) => (
               <tr key={product.id} className='border-b hover:bg-gray-50'>
-                <td className='py-3 pr-4'>
-                  {product.images[0] ? (
-                    <Image
-                      src={product.images[0]}
-                      alt={product.title}
-                      className='w-12 h-12 object-cover rounded'
-                    />
-                  ) : (
-                    <div className='w-12 h-12 bg-gray-100 rounded' />
-                  )}
-                </td>
                 <td className='py-3 pr-4 font-medium'>{product.title}</td>
                 <td className='py-3 pr-4'>${product.price.toFixed(2)}</td>
                 <td className='py-3 pr-4'>{product.stock}</td>
@@ -122,7 +108,7 @@ const SellerProductPage = () => {
                         }
                       }}
                       disabled={deleteMutation.isPending}
-                      className='text-red-500 hover:underline disabled:opacity-50 disabled:no-underline'
+                      className='text-red-500 hover:underline disabled:opacity-50'
                     >
                       {deleteMutation.isPending ? "Deleting..." : "Delete"}
                     </button>
