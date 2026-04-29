@@ -5,6 +5,7 @@ const protectedRoutes = [
   "/api/auth/me",
   "/api/admin/sellers",
   "/api/seller/products",
+  "/api/products",
 ];
 
 export function proxy(req: NextRequest) {
